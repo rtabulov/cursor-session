@@ -62,12 +62,13 @@ func decodeProtobufStrings(data []byte) ([]string, error) {
 		offset += lengthBytes
 
 		// Read the string data
-		if offset+int(length) > len(data) {
-			break // Not enough data
+		if length > uint64(len(data)-offset) {
+			return strings, fmt.Errorf("%w at offset %d", errInvalidLengthDelimitedField, offset)
 		}
 
-		stringData := data[offset : offset+int(length)]
-		offset += int(length)
+		end := offset + int(length)
+		stringData := data[offset:end]
+		offset = end
 
 		// Try to extract readable strings
 		// Check if it's valid UTF-8 and mostly readable
