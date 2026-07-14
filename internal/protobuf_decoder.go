@@ -3,6 +3,7 @@ package internal
 import (
 	"encoding/binary"
 	"fmt"
+	"math"
 )
 
 // DecodeProtobufStrings extracts all length-delimited strings from protobuf-encoded data
@@ -58,13 +59,14 @@ func decodeProtobufStrings(data []byte) ([]string, error) {
 		}
 		offset += lengthBytes
 
-		// Read the string data
-		if offset+int(length) > len(data) {
-			break // Not enough data
+		// Safely validate and convert length
+		intLength, ok := safeLength(length, offset, len(data))
+		if !ok {
+			break // Length is unsafe (too large, negative, or exceeds buffer)
 		}
 
-		stringData := data[offset : offset+int(length)]
-		offset += int(length)
+		stringData := data[offset : offset+intLength]
+		offset += intLength
 
 		// Try to extract readable strings
 		// Check if it's valid UTF-8 and mostly readable
@@ -103,6 +105,29 @@ func decodeVarint(data []byte) (uint64, int) {
 	}
 
 	return result, bytesRead
+}
+
+// safeLength checks if a uint64 length can be safely used for slicing.
+// Returns the length as int and true if safe, or 0 and false if unsafe.
+func safeLength(length uint64, offset int, dataLen int) (int, bool) {
+	// Check if length fits in an int (prevents negative values after cast)
+	if length > math.MaxInt {
+		return 0, false
+	}
+	
+	intLength := int(length)
+	
+	// Check if intLength is negative (shouldn't happen after above check, but be defensive)
+	if intLength < 0 {
+		return 0, false
+	}
+	
+	// Check if offset + length would overflow or exceed buffer size
+	if offset > dataLen || intLength > dataLen-offset {
+		return 0, false
+	}
+	
+	return intLength, true
 }
 
 // extractProtobufFields extracts all fields from protobuf data and returns them as a map
@@ -151,12 +176,14 @@ func extractProtobufFields(data []byte) (map[string]interface{}, error) {
 			}
 			offset += lengthBytes
 
-			if offset+int(length) > len(data) {
-				return result, fmt.Errorf("not enough data for length-delimited field at offset %d", offset)
+			// Safely validate and convert length
+			intLength, ok := safeLength(length, offset, len(data))
+			if !ok {
+				return result, fmt.Errorf("unsafe length %d at offset %d (buffer size %d)", length, offset, len(data))
 			}
 
-			fieldData := data[offset : offset+int(length)]
-			offset += int(length)
+			fieldData := data[offset : offset+intLength]
+			offset += intLength
 
 			// Try to decode as string
 			if isReadableText(string(fieldData)) {
