@@ -2,7 +2,7 @@
 
 # Simple binary installer for cursor-session CLI
 # Downloads and installs pre-built binary for your platform
-# Usage: curl -fsSL https://raw.githubusercontent.com/iksnae/cursor-session/main/install-binary.sh | bash
+# Usage: curl -fsSL https://raw.githubusercontent.com/rtabulov/cursor-session/main/install-binary.sh | bash
 
 set -e
 
@@ -16,7 +16,7 @@ BOLD='\033[1m'
 NC='\033[0m' # No Color
 
 # Configuration
-REPO="iksnae/cursor-session"
+REPO="rtabulov/cursor-session"
 BINARY_NAME="cursor-session"
 INSTALL_DIR="$HOME/.local/bin"
 LATEST_VERSION=$(curl -s "https://api.github.com/repos/${REPO}/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/' || echo "v0.0.2")

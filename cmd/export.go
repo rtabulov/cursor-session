@@ -6,8 +6,8 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/iksnae/cursor-session/internal"
-	"github.com/iksnae/cursor-session/internal/export"
+	"github.com/rtabulov/cursor-session/internal"
+	"github.com/rtabulov/cursor-session/internal/export"
 	"github.com/spf13/cobra"
 )
 

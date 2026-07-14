@@ -14,7 +14,7 @@ Single-context layout: root `CONTEXT.md` + `docs/adr/`. See `docs/agents/domain.
 
 ## Cursor Cloud specific instructions
 
-`cursor-session` is a single Go CLI (module `github.com/iksnae/cursor-session`, Go 1.23) that extracts and exports Cursor IDE / cursor-agent chat sessions. There is no server or GUI; verify it via the terminal.
+`cursor-session` is a single Go CLI (module `github.com/rtabulov/cursor-session`, Go 1.23) that extracts and exports Cursor IDE / cursor-agent chat sessions. There is no server or GUI; verify it via the terminal.
 
 - Standard commands live in the `Makefile` (`make build`, `make test`, `make test-coverage`) and `README.md`. CI (`.github/workflows/ci.yml`) runs `go vet ./...`, `golangci-lint run`, and `go test ./... -v`.
 - `golangci-lint` installs to `$(go env GOPATH)/bin` (i.e. `~/go/bin`), which is not on `PATH` by default. Run it as `"$(go env GOPATH)/bin/golangci-lint" run --timeout=5m ./...` or prepend that dir to `PATH` for the session.

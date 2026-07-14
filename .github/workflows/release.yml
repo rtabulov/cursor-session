@@ -86,7 +86,7 @@ jobs:
             echo "  Build date: $BUILD_DATE"
 
             GOOS=$os GOARCH=$arch go build -buildvcs=false \
-              -ldflags "-X 'github.com/iksnae/cursor-session/cmd.version=$VERSION' -X 'github.com/iksnae/cursor-session/cmd.commit=$COMMIT' -X 'github.com/iksnae/cursor-session/cmd.date=$BUILD_DATE'" \
+              -ldflags "-X 'github.com/rtabulov/cursor-session/cmd.version=$VERSION' -X 'github.com/rtabulov/cursor-session/cmd.commit=$COMMIT' -X 'github.com/rtabulov/cursor-session/cmd.date=$BUILD_DATE'" \
               -o cursor-session \
               .
 

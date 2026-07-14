@@ -5,7 +5,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/iksnae/cursor-session/internal"
+	"github.com/rtabulov/cursor-session/internal"
 )
 
 func TestShowCommand(t *testing.T) {

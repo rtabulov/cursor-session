@@ -1,5 +1,5 @@
 ![cursor session](./images/simple-icon.png)
-[![codecov](https://codecov.io/gh/iksnae/cursor-session/branch/main/graph/badge.svg)](https://codecov.io/gh/iksnae/cursor-session)
+[![codecov](https://codecov.io/gh/rtabulov/cursor-session/branch/main/graph/badge.svg)](https://codecov.io/gh/rtabulov/cursor-session)
 
 # Cursor Session
 
@@ -18,24 +18,19 @@ Works with both Cursor IDE's desktop app storage (globalStorage) and cursor-agen
 - 🖥️ **Cross-platform** - Works on macOS and Linux
 - 🔌 **Multiple storage backends** - Supports both desktop app (globalStorage) and cursor-agent CLI storage
 - 🛠️ **Diagnostic tools** - Built-in healthcheck and path detection commands
-- 🔄 **Auto-upgrade** - Built-in upgrade command to get the latest version
+- 🔄 **Upgrade status** - Discoverable command that explains upgrades are not yet supported on this fork
 
 ## Installation
 
-### Quick Install (Recommended - One Command)
+### Quick Install from Source (Recommended)
 
-Install cursor-session with a single command. The installer automatically detects your platform and downloads the correct binary:
+Install from this fork with Go:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/iksnae/cursor-session/main/install-binary.sh | bash
+go install github.com/rtabulov/cursor-session@main
 ```
 
-That's it! The script will:
-
-- Detect your OS and architecture (macOS Intel/ARM, Linux amd64/arm64)
-- Download the latest pre-built binary
-- Install to `~/.local/bin`
-- Add to your PATH automatically
+Pre-built binary releases are not available for this fork yet.
 
 **Verify installation:**
 
@@ -43,30 +38,13 @@ That's it! The script will:
 cursor-session --version
 ```
 
-### Manual Binary Download
-
-If you prefer to download manually, visit the [Releases](https://github.com/iksnae/cursor-session/releases) page and download the appropriate binary for your platform:
-
-- **macOS (Intel)**: `cursor-session-*-darwin-amd64.tar.gz`
-- **macOS (Apple Silicon)**: `cursor-session-*-darwin-arm64.tar.gz`
-- **Linux (x86_64)**: `cursor-session-*-linux-amd64.tar.gz`
-- **Linux (ARM64)**: `cursor-session-*-linux-arm64.tar.gz`
-
-Extract and move to your PATH:
-
-```bash
-tar -xzf cursor-session-*.tar.gz
-mv cursor-session ~/.local/bin/
-chmod +x ~/.local/bin/cursor-session
-```
-
-### Quick Install from Source (For Developers)
+### Install from a Clone
 
 If you have Go installed, you can build from source:
 
 ```bash
 # Clone the repository
-git clone https://github.com/iksnae/cursor-session.git
+git clone https://github.com/rtabulov/cursor-session.git
 cd cursor-session
 
 # Run the install script (fully automatic - no manual steps!)
@@ -75,24 +53,10 @@ cd cursor-session
 
 The script automatically builds, installs, and configures the tool. **No manual configuration needed!** Works on macOS (zsh) and Linux (bash/zsh).
 
-### Using Go Install
-
-**For stable releases:**
-
-```bash
-go install github.com/iksnae/cursor-session@latest
-```
-
-**For latest development version:**
-
-```bash
-go install github.com/iksnae/cursor-session@main
-```
-
 ### Using Make
 
 ```bash
-git clone https://github.com/iksnae/cursor-session.git
+git clone https://github.com/rtabulov/cursor-session.git
 cd cursor-session
 make install
 ```
@@ -100,7 +64,7 @@ make install
 ### Manual Build
 
 ```bash
-git clone https://github.com/iksnae/cursor-session.git
+git clone https://github.com/rtabulov/cursor-session.git
 cd cursor-session
 go build -buildvcs=false -o cursor-session .
 sudo cp cursor-session /usr/local/bin/
@@ -128,7 +92,7 @@ cursor-session export --format md
 # Check if everything is working correctly
 cursor-session healthcheck
 
-# Upgrade to the latest version
+# Check upgrade support (currently unavailable on this fork)
 cursor-session upgrade
 ```
 
@@ -210,7 +174,12 @@ Attempt to find the correct path to Cursor database files. Use `--hello` to seed
 cursor-session upgrade
 ```
 
-Upgrade cursor-session to the latest released version from GitHub.
+The command currently refuses with `upgrade is not supported on this fork yet` and does not
+contact GitHub. Until this fork publishes binary releases, update from source:
+
+```bash
+go install github.com/rtabulov/cursor-session@main
+```
 
 ### Reconstruct (Debug)
 

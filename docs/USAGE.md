@@ -4,11 +4,13 @@ Complete guide to using the Cursor Session Export CLI for extracting chat sessio
 
 ## Installation
 
-For installation instructions, including downloading pre-built binaries, see the [main README](../README.md#installation).
+For source installation instructions, see the [main README](../README.md#installation).
 
 Quick options:
-- **Download pre-built binary** (recommended, no Go required) - See [Releases](https://github.com/iksnae/cursor-session/releases)
-- **Build from source** - Use `./install.sh` or `go install github.com/iksnae/cursor-session@latest`
+- **Install with Go** - Run `go install github.com/rtabulov/cursor-session@main`
+- **Build from a clone** - Use `./install.sh`
+
+Pre-built binary releases are not available for this fork yet.
 
 ## Commands
 
@@ -142,14 +144,12 @@ cursor-session snoop --hello
 cursor-session upgrade
 ```
 
-Upgrades cursor-session to the latest released version from GitHub. The command will:
-1. Check your current installed version
-2. Fetch the latest release from GitHub
-3. Download and install the latest binary if a newer version is available
+The command is discoverable but currently refuses with
+`upgrade is not supported on this fork yet`. It does not contact GitHub or download a binary.
 
-**Alternative**: If you installed via `go install`, you can also upgrade by running:
+Until this fork publishes binary releases, update from source:
 ```bash
-go install github.com/iksnae/cursor-session@latest
+go install github.com/rtabulov/cursor-session@main
 ```
 
 ### Reconstruct (Debug)

@@ -6,7 +6,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/iksnae/cursor-session/internal"
+	"github.com/rtabulov/cursor-session/internal"
 )
 
 func TestJSONLExporter_Export(t *testing.T) {

@@ -7,7 +7,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/iksnae/cursor-session/internal"
+	"github.com/rtabulov/cursor-session/internal"
 	"github.com/spf13/cobra"
 	_ "modernc.org/sqlite"
 )

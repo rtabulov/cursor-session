@@ -86,7 +86,7 @@ Each subcommand maps to an operation in the core package.
 | `export`     | Exports sessions in desired format.            |
 | `healthcheck`| Verifies storage access and session availability. |
 | `snoop`      | Finds database file paths and verifies access.  |
-| `upgrade`    | Upgrades to latest version from GitHub.         |
+| `upgrade`    | Refuses until this fork supports binary upgrades. |
 | `reconstruct`| Reconstructs conversations (debug).             |
 
 ---
@@ -240,7 +240,7 @@ cursor-session healthcheck
 
 cursor-session snoop
 
-# Upgrade to latest version
+# Check upgrade support (currently unavailable on this fork)
 
 cursor-session upgrade
 
@@ -296,7 +296,7 @@ Regression Tests Re-run after schema changes to verify backward compatibility.
     • ✅ Multiple storage backend support
     • ✅ Caching system
     • ✅ Diagnostic tools
-    • ✅ Auto-upgrade functionality
+    • ✅ Discoverable upgrade command with an offline refusal
     • 🚧 Future: Dockerized version for CI automation
 
 ⸻
@@ -318,7 +318,7 @@ Status: ✅ Implementation Complete
 - ✅ Multiple export formats (JSONL, Markdown, YAML, JSON)
 - ✅ Caching system for fast access
 - ✅ Diagnostic tools (healthcheck, snoop)
-- ✅ Auto-upgrade functionality
+- ✅ Discoverable upgrade command with an offline refusal
 - ✅ Workspace association
 - ✅ Progress indicators
 
