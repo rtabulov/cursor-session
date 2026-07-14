@@ -7,12 +7,12 @@ import (
 )
 
 func TestUpgradeCommand_RefusesOnThisFork(t *testing.T) {
-	rootCmd.SetArgs([]string{"upgrade"})
+	cmd := newUpgradeCmd()
 	var stdout, stderr bytes.Buffer
-	rootCmd.SetOut(&stdout)
-	rootCmd.SetErr(&stderr)
+	cmd.SetOut(&stdout)
+	cmd.SetErr(&stderr)
 
-	err := rootCmd.Execute()
+	err := cmd.Execute()
 	if err == nil {
 		t.Fatal("upgrade should refuse on this fork")
 	}
@@ -26,12 +26,13 @@ func TestUpgradeCommand_RefusesOnThisFork(t *testing.T) {
 }
 
 func TestUpgradeCommand_HelpDoesNotPointAtIksnae(t *testing.T) {
-	rootCmd.SetArgs([]string{"upgrade", "--help"})
+	cmd := newUpgradeCmd()
+	cmd.SetArgs([]string{"--help"})
 	var stdout, stderr bytes.Buffer
-	rootCmd.SetOut(&stdout)
-	rootCmd.SetErr(&stderr)
+	cmd.SetOut(&stdout)
+	cmd.SetErr(&stderr)
 
-	if err := rootCmd.Execute(); err != nil {
+	if err := cmd.Execute(); err != nil {
 		t.Fatalf("upgrade --help: %v", err)
 	}
 
