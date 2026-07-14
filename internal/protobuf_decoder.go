@@ -151,12 +151,13 @@ func extractProtobufFields(data []byte) (map[string]interface{}, error) {
 			}
 			offset += lengthBytes
 
-			if offset+int(length) > len(data) {
+			if length > uint64(len(data)-offset) {
 				return result, fmt.Errorf("not enough data for length-delimited field at offset %d", offset)
 			}
 
-			fieldData := data[offset : offset+int(length)]
-			offset += int(length)
+			end := offset + int(length)
+			fieldData := data[offset:end]
+			offset = end
 
 			// Try to decode as string
 			if isReadableText(string(fieldData)) {
