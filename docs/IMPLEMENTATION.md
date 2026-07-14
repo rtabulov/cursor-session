@@ -36,7 +36,7 @@
 - ✅ Reconstruct command (`cmd/reconstruct.go`)
 - ✅ Healthcheck command (`cmd/healthcheck.go`) - Storage health verification
 - ✅ Snoop command (`cmd/snoop.go`) - Path detection and debugging
-- ✅ Upgrade command (`cmd/upgrade.go`) - Auto-upgrade functionality
+- ✅ Upgrade command (`cmd/upgrade.go`) - Offline refusal until fork upgrades are supported
 - ✅ Main entry point (`main.go`)
 
 ### Phase 6: Error Handling & Logging ✅
@@ -62,7 +62,7 @@
 7. **Caching System**: Intelligent caching for fast access (`~/.cursor-session-cache/`)
 8. **Export Filtering**: Filter by workspace or export specific sessions
 9. **Diagnostic Tools**: Healthcheck and snoop commands for troubleshooting
-10. **Auto-Upgrade**: Built-in upgrade command to get latest version
+10. **Upgrade Status**: Discoverable command that refuses until fork upgrades are supported
 11. **Database Copying**: `--copy` flag to avoid locking issues
 12. **Custom Storage Paths**: `--storage` flag for custom database locations
 13. **Intermediary Format**: Optional reconstruction to JSON for debugging
@@ -79,7 +79,7 @@ cursor-session/
 │   ├── reconstruct.go
 │   ├── healthcheck.go    # Storage health verification
 │   ├── snoop.go          # Path detection
-│   └── upgrade.go        # Auto-upgrade
+│   └── upgrade.go        # Upgrade support status
 ├── internal/
 │   ├── detect.go
 │   ├── database.go
