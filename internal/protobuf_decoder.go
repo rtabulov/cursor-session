@@ -8,6 +8,13 @@ import (
 
 var errInvalidLengthDelimitedField = errors.New("invalid length-delimited field")
 
+func lengthDelimitedEnd(data []byte, offset int, length uint64) (int, error) {
+	if offset < 0 || offset > len(data) || length > uint64(len(data)-offset) {
+		return 0, fmt.Errorf("%w at offset %d", errInvalidLengthDelimitedField, offset)
+	}
+	return offset + int(length), nil
+}
+
 // DecodeProtobufStrings extracts all length-delimited strings from protobuf-encoded data
 // Protobuf wire format: [field_number << 3 | wire_type] [length] [data]
 // Wire type 2 = length-delimited (strings, embedded messages, packed repeated fields)
@@ -62,11 +69,11 @@ func decodeProtobufStrings(data []byte) ([]string, error) {
 		offset += lengthBytes
 
 		// Read the string data
-		if length > uint64(len(data)-offset) {
-			return strings, fmt.Errorf("%w at offset %d", errInvalidLengthDelimitedField, offset)
+		end, err := lengthDelimitedEnd(data, offset, length)
+		if err != nil {
+			return strings, err
 		}
 
-		end := offset + int(length)
 		stringData := data[offset:end]
 		offset = end
 
@@ -155,11 +162,11 @@ func extractProtobufFields(data []byte) (map[string]interface{}, error) {
 			}
 			offset += lengthBytes
 
-			if length > uint64(len(data)-offset) {
-				return result, fmt.Errorf("%w at offset %d", errInvalidLengthDelimitedField, offset)
+			end, err := lengthDelimitedEnd(data, offset, length)
+			if err != nil {
+				return result, err
 			}
 
-			end := offset + int(length)
 			fieldData := data[offset:end]
 			offset = end
 
