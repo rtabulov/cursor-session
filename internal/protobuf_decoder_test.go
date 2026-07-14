@@ -74,6 +74,12 @@ func TestDecodeProtobufStrings(t *testing.T) {
 			want:    []string{},
 			wantErr: false,
 		},
+		{
+			name:    "length exceeds remaining data",
+			data:    []byte{0x0a, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x01},
+			want:    []string{},
+			wantErr: true,
+		},
 	}
 
 	for _, tt := range tests {
