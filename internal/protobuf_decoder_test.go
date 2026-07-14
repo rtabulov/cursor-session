@@ -2,6 +2,7 @@ package internal
 
 import (
 	"encoding/json"
+	"slices"
 	"testing"
 )
 
@@ -222,5 +223,159 @@ func TestExtractProtobufFields_WithJSON(t *testing.T) {
 
 	if !foundJSON {
 		t.Error("extractProtobufFields() did not extract JSON from protobuf")
+	}
+}
+
+func TestExtractProtobufFields_OversizedLength(t *testing.T) {
+	tests := []struct {
+		name    string
+		data    []byte
+		wantErr bool
+		desc    string
+	}{
+		{
+			name: "length exceeds buffer size",
+			// Field 1, wire type 2, length varint = 1000, but only 5 bytes of data follow
+			data:    []byte{0x0a, 0xe8, 0x07, 'H', 'e', 'l', 'l', 'o'},
+			wantErr: true,
+			desc:    "length 1000 exceeds remaining buffer",
+		},
+		{
+			name: "length equals math.MaxInt64",
+			// Field 1, wire type 2, length = math.MaxInt64 encoded as varint
+			// MaxInt64 = 9223372036854775807 = 0x7FFFFFFFFFFFFFFF
+			// Varint encoding: 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0x7F
+			data:    []byte{0x0a, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x7F},
+			wantErr: true,
+			desc:    "length equals MaxInt64, exceeds buffer",
+		},
+		{
+			name: "length overflows when cast to int",
+			// Field 1, wire type 2, length = math.MaxUint64 encoded as varint
+			// MaxUint64 = 18446744073709551615 = 0xFFFFFFFFFFFFFFFF
+			// Varint encoding: 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0x01
+			data:    []byte{0x0a, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x01},
+			wantErr: true,
+			desc:    "length overflows int on 64-bit systems",
+		},
+		{
+			name: "nested oversized length fails safely",
+			// Outer field: Field 1, wire type 2, length 3, containing nested protobuf
+			// Inner field: Field 1, wire type 2, oversized length 1000 (but no data follows)
+			// The outer decode succeeds (has valid 3 bytes), inner decode fails safely without panic
+			data: func() []byte {
+				// Inner protobuf with oversized length
+				inner := []byte{0x0a, 0xe8, 0x07} // Field 1, length 1000
+				// Outer protobuf wrapping inner
+				outer := []byte{0x0a, byte(len(inner))}
+				return append(outer, inner...)
+			}(),
+			wantErr: false, // Outer decode succeeds, inner fails safely
+			desc:    "nested protobuf with oversized length fails safely without panic",
+		},
+		{
+			name: "valid small length still works",
+			// Field 1, wire type 2, length 5, "Hello"
+			data:    []byte{0x0a, 0x05, 'H', 'e', 'l', 'l', 'o'},
+			wantErr: false,
+			desc:    "valid small length decodes successfully",
+		},
+		{
+			name: "valid medium length still works",
+			// Field 1, wire type 2, length 200, followed by 200 bytes
+			data: func() []byte {
+				data := []byte{0x0a, 0xc8, 0x01} // Field 1, length 200 (varint)
+				for i := 0; i < 200; i++ {
+					data = append(data, byte('A'+i%26))
+				}
+				return data
+			}(),
+			wantErr: false,
+			desc:    "valid medium length (200 bytes) decodes successfully",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			fields, err := extractProtobufFields(tt.data)
+
+			if tt.wantErr {
+				if err == nil {
+					t.Errorf("extractProtobufFields() expected error for %s, got nil", tt.desc)
+				}
+			} else {
+				if err != nil {
+					t.Errorf("extractProtobufFields() unexpected error for %s: %v", tt.desc, err)
+				}
+				if fields == nil {
+					t.Errorf("extractProtobufFields() returned nil for %s", tt.desc)
+				}
+			}
+		})
+	}
+}
+
+func TestDecodeProtobufStrings_OversizedLength(t *testing.T) {
+	tests := []struct {
+		name string
+		data []byte
+		want []string
+	}{
+		{
+			name: "length exceeds buffer size",
+			data: []byte{0x0a, 0xe8, 0x07, 'H', 'e', 'l', 'l', 'o'},
+		},
+		{
+			name: "length overflows when cast to int",
+			data: []byte{0x0a, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x01},
+		},
+		{
+			name: "valid small length still works",
+			data: []byte{0x0a, 0x05, 'H', 'e', 'l', 'l', 'o'},
+			want: []string{"Hello"},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := decodeProtobufStrings(tt.data)
+			if err != nil {
+				t.Fatalf("decodeProtobufStrings() unexpected error: %v", err)
+			}
+			if !slices.Equal(got, tt.want) {
+				t.Errorf("decodeProtobufStrings() = %q, want %q", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestTryProtobufDecode_OversizedLength(t *testing.T) {
+	tests := []struct {
+		name string
+		data []byte
+		want bool
+		desc string
+	}{
+		{
+			name: "oversized length returns false not panic",
+			data: []byte{0x0a, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x01},
+			want: false,
+			desc: "length overflows int on 64-bit systems",
+		},
+		{
+			name: "valid data still returns true",
+			data: []byte{0x0a, 0x05, 'H', 'e', 'l', 'l', 'o'},
+			want: true,
+			desc: "valid small length decodes successfully",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			_, got := tryProtobufDecode(tt.data)
+			if got != tt.want {
+				t.Errorf("tryProtobufDecode() = %v, want %v (test: %s)", got, tt.want, tt.desc)
+			}
+		})
 	}
 }
