@@ -363,6 +363,12 @@ func TestTryProtobufDecode_OversizedLength(t *testing.T) {
 			desc: "length overflows int on 64-bit systems",
 		},
 		{
+			name: "overflowing tenth varint byte returns false",
+			data: []byte{0x0a, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x02},
+			want: false,
+			desc: "length varint exceeds uint64",
+		},
+		{
 			name: "valid data still returns true",
 			data: []byte{0x0a, 0x05, 'H', 'e', 'l', 'l', 'o'},
 			want: true,
