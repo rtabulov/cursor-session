@@ -2,6 +2,7 @@ package internal
 
 import (
 	"encoding/json"
+	"slices"
 	"testing"
 )
 
@@ -296,15 +297,8 @@ func TestExtractProtobufFields_OversizedLength(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			// Test should not panic - that's the main fix
-			defer func() {
-				if r := recover(); r != nil {
-					t.Errorf("extractProtobufFields() panicked: %v (test: %s)", r, tt.desc)
-				}
-			}()
-
 			fields, err := extractProtobufFields(tt.data)
-			
+
 			if tt.wantErr {
 				if err == nil {
 					t.Errorf("extractProtobufFields() expected error for %s, got nil", tt.desc)
@@ -325,39 +319,31 @@ func TestDecodeProtobufStrings_OversizedLength(t *testing.T) {
 	tests := []struct {
 		name string
 		data []byte
-		desc string
+		want []string
 	}{
 		{
 			name: "length exceeds buffer size",
 			data: []byte{0x0a, 0xe8, 0x07, 'H', 'e', 'l', 'l', 'o'},
-			desc: "length 1000 exceeds remaining buffer",
 		},
 		{
 			name: "length overflows when cast to int",
 			data: []byte{0x0a, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x01},
-			desc: "length overflows int on 64-bit systems",
 		},
 		{
 			name: "valid small length still works",
 			data: []byte{0x0a, 0x05, 'H', 'e', 'l', 'l', 'o'},
-			desc: "valid small length decodes successfully",
+			want: []string{"Hello"},
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			// Test should not panic
-			defer func() {
-				if r := recover(); r != nil {
-					t.Errorf("decodeProtobufStrings() panicked: %v (test: %s)", r, tt.desc)
-				}
-			}()
-
-			// Should complete without panic regardless of result
-			_, err := decodeProtobufStrings(tt.data)
+			got, err := decodeProtobufStrings(tt.data)
 			if err != nil {
-				// Error is acceptable for malformed data
-				t.Logf("decodeProtobufStrings() returned error (expected for %s): %v", tt.desc, err)
+				t.Fatalf("decodeProtobufStrings() unexpected error: %v", err)
+			}
+			if !slices.Equal(got, tt.want) {
+				t.Errorf("decodeProtobufStrings() = %q, want %q", got, tt.want)
 			}
 		})
 	}
@@ -386,13 +372,6 @@ func TestTryProtobufDecode_OversizedLength(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			// Test should not panic
-			defer func() {
-				if r := recover(); r != nil {
-					t.Errorf("tryProtobufDecode() panicked: %v (test: %s)", r, tt.desc)
-				}
-			}()
-
 			_, got := tryProtobufDecode(tt.data)
 			if got != tt.want {
 				t.Errorf("tryProtobufDecode() = %v, want %v (test: %s)", got, tt.want, tt.desc)

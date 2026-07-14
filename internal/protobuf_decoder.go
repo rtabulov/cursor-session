@@ -114,19 +114,19 @@ func safeLength(length uint64, offset int, dataLen int) (int, bool) {
 	if length > math.MaxInt {
 		return 0, false
 	}
-	
+
 	intLength := int(length)
-	
+
 	// Check if intLength is negative (shouldn't happen after above check, but be defensive)
 	if intLength < 0 {
 		return 0, false
 	}
-	
+
 	// Check if offset + length would overflow or exceed buffer size
 	if offset > dataLen || intLength > dataLen-offset {
 		return 0, false
 	}
-	
+
 	return intLength, true
 }
 
