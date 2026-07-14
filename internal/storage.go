@@ -204,19 +204,19 @@ func NewStorageBackend(paths StoragePaths) (StorageBackend, error) {
 	var errMsg strings.Builder
 	errMsg.WriteString("no Cursor storage found\n\n")
 	errMsg.WriteString("Checked storage locations:\n")
-	errMsg.WriteString(fmt.Sprintf("  • Desktop app: %s (not found)\n", paths.GetGlobalStorageDBPath()))
+	fmt.Fprintf(&errMsg, "  • Desktop app: %s (not found)\n", paths.GetGlobalStorageDBPath())
 
 	if agentStorageChecked {
 		if paths.AgentStoragePath != "" {
-			errMsg.WriteString(fmt.Sprintf("  • Agent CLI: %s (directory exists but no store.db files found)\n", paths.AgentStoragePath))
-			errMsg.WriteString(fmt.Sprintf("    → Expected pattern: %s/{hash}/{session-id}/store.db\n", paths.AgentStoragePath))
+			fmt.Fprintf(&errMsg, "  • Agent CLI: %s (directory exists but no store.db files found)\n", paths.AgentStoragePath)
+			fmt.Fprintf(&errMsg, "    → Expected pattern: %s/{hash}/{session-id}/store.db\n", paths.AgentStoragePath)
 			errMsg.WriteString("    → Sessions are created when cursor-agent CLI runs with chat interactions\n")
 		} else {
 			errMsg.WriteString("  • Agent CLI: not available on this platform\n")
 		}
 	} else {
 		if paths.AgentStoragePath != "" {
-			errMsg.WriteString(fmt.Sprintf("  • Agent CLI: %s (directory not found)\n", paths.AgentStoragePath))
+			fmt.Fprintf(&errMsg, "  • Agent CLI: %s (directory not found)\n", paths.AgentStoragePath)
 			errMsg.WriteString("    → This directory is created when cursor-agent CLI is first used\n")
 		} else {
 			errMsg.WriteString("  • Agent CLI: not available on this platform\n")

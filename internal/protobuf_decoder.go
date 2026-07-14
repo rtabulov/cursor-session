@@ -87,24 +87,25 @@ func decodeProtobufStrings(data []byte) ([]string, error) {
 func decodeVarint(data []byte) (uint64, int) {
 	var result uint64
 	var shift uint
-	bytesRead := 0
 
 	for i, b := range data {
 		if i >= 10 { // Varints can be at most 10 bytes
 			return 0, 0
 		}
+		if i == 9 && b > 1 {
+			return 0, 0
+		}
 
 		result |= uint64(b&0x7F) << shift
-		bytesRead++
 
 		if (b & 0x80) == 0 {
-			break
+			return result, i + 1
 		}
 
 		shift += 7
 	}
 
-	return result, bytesRead
+	return 0, 0
 }
 
 // safeLength checks if a uint64 length can be safely used for slicing.
