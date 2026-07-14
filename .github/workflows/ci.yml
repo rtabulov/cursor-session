@@ -84,7 +84,7 @@ jobs:
           GOARCH: ${{ matrix.goarch }}
         run: |
           go build -buildvcs=false \
-            -ldflags "-X 'github.com/iksnae/cursor-session/cmd.version=dev' -X 'github.com/iksnae/cursor-session/cmd.commit=$(git rev-parse --short HEAD)' -X 'github.com/iksnae/cursor-session/cmd.date=$(date -u +%Y-%m-%dT%H:%M:%SZ)'" \
+            -ldflags "-X 'github.com/rtabulov/cursor-session/cmd.version=dev' -X 'github.com/rtabulov/cursor-session/cmd.commit=$(git rev-parse --short HEAD)' -X 'github.com/rtabulov/cursor-session/cmd.date=$(date -u +%Y-%m-%dT%H:%M:%SZ)'" \
             -o cursor-session \
             .
 

@@ -4,7 +4,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/iksnae/cursor-session/testutil"
+	"github.com/rtabulov/cursor-session/testutil"
 )
 
 func TestOpenDatabase(t *testing.T) {

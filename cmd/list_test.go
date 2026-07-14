@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	"github.com/charmbracelet/lipgloss"
-	"github.com/iksnae/cursor-session/internal"
+	"github.com/rtabulov/cursor-session/internal"
 )
 
 func TestListCommand_FlagParsing(t *testing.T) {

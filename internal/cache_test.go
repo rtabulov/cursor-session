@@ -6,7 +6,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/iksnae/cursor-session/testutil"
+	"github.com/rtabulov/cursor-session/testutil"
 )
 
 func TestNewCacheManager(t *testing.T) {

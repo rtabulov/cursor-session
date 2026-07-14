@@ -6,7 +6,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/iksnae/cursor-session/internal"
+	"github.com/rtabulov/cursor-session/internal"
 )
 
 func TestJSONExporter_Export(t *testing.T) {

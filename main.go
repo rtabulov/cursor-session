@@ -1,6 +1,6 @@
 package main
 
-import "github.com/iksnae/cursor-session/cmd"
+import "github.com/rtabulov/cursor-session/cmd"
 
 func main() {
 	cmd.Execute()

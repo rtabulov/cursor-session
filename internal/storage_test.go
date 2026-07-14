@@ -5,7 +5,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/iksnae/cursor-session/testutil"
+	"github.com/rtabulov/cursor-session/testutil"
 )
 
 func TestNewStorage(t *testing.T) {

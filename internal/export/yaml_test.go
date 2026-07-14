@@ -5,7 +5,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/iksnae/cursor-session/internal"
+	"github.com/rtabulov/cursor-session/internal"
 	"gopkg.in/yaml.v3"
 )
 

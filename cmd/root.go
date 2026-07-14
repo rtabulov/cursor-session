@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/iksnae/cursor-session/internal"
+	"github.com/rtabulov/cursor-session/internal"
 	"github.com/spf13/cobra"
 )
 
@@ -39,7 +39,7 @@ Quick Start:
   cursor-session show <session-id>        # View a specific session
   cursor-session export --format md      # Export as Markdown
 
-For detailed usage, see: https://github.com/iksnae/cursor-session`,
+For detailed usage, see: https://github.com/rtabulov/cursor-session`,
 	Version: fmt.Sprintf("%s (commit: %s, built: %s)", version, commit, date),
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
 		internal.SetVerbose(verbose)
