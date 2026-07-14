@@ -155,6 +155,12 @@ func TestTryProtobufDecode(t *testing.T) {
 			wantKeys: 1,
 		},
 		{
+			name: "length exceeds remaining data",
+			// Field 1, wire type 2, length math.MaxUint64, no payload.
+			data: []byte{0x0a, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x01},
+			want: false,
+		},
+		{
 			name: "invalid wire type",
 			// Invalid wire type (7)
 			data: []byte{0x3f},
