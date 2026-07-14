@@ -161,6 +161,15 @@ func TestTryProtobufDecode(t *testing.T) {
 			want: false,
 		},
 		{
+			name: "nested length exceeds remaining data",
+			// Outer field contains a nested field with length math.MaxUint64.
+			data: []byte{
+				0x0a, 0x0b,
+				0x0a, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x01,
+			},
+			want: false,
+		},
+		{
 			name: "invalid wire type",
 			// Invalid wire type (7)
 			data: []byte{0x3f},
