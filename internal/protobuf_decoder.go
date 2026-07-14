@@ -2,8 +2,11 @@ package internal
 
 import (
 	"encoding/binary"
+	"errors"
 	"fmt"
 )
+
+var errInvalidLengthDelimitedField = errors.New("invalid length-delimited field")
 
 // DecodeProtobufStrings extracts all length-delimited strings from protobuf-encoded data
 // Protobuf wire format: [field_number << 3 | wire_type] [length] [data]
@@ -152,7 +155,7 @@ func extractProtobufFields(data []byte) (map[string]interface{}, error) {
 			offset += lengthBytes
 
 			if length > uint64(len(data)-offset) {
-				return result, fmt.Errorf("not enough data for length-delimited field at offset %d", offset)
+				return result, fmt.Errorf("%w at offset %d", errInvalidLengthDelimitedField, offset)
 			}
 
 			end := offset + int(length)
@@ -168,7 +171,11 @@ func extractProtobufFields(data []byte) (map[string]interface{}, error) {
 					result[fieldKey] = string(jsonBytes)
 				} else {
 					// Try to decode nested protobuf
-					if nestedFields, err := extractProtobufFields(fieldData); err == nil && len(nestedFields) > 0 {
+					nestedFields, err := extractProtobufFields(fieldData)
+					if errors.Is(err, errInvalidLengthDelimitedField) {
+						return result, err
+					}
+					if err == nil && len(nestedFields) > 0 {
 						result[fieldKey] = nestedFields
 					} else {
 						// Store as hex for debugging
